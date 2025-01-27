@@ -23,13 +23,24 @@ public class IdleState : PlayerState
         character.playerControls.PlayerMap.MoveRight.performed -= this.ChangeToMoveRight;
     }
 
+    public override void FixedUpdateState()
+    {
+        base.FixedUpdateState();
+        /*
+        if (this.character.isGrounded == false)
+        {
+            this.character.ChangeState(new FallingState());
+        }
+        */
+    }
+
     private void ChangeToMoveLeft(InputAction.CallbackContext context)
     {
-        this.character.ChangeState(new RunState(MoveDirection.Left));
+        this.character.ChangeState(new RunState(Vector3.left));
     }
 
     private void ChangeToMoveRight(InputAction.CallbackContext context)
     {
-        this.character.ChangeState(new RunState(MoveDirection.Right));
+        this.character.ChangeState(new RunState(Vector3.right));
     }
 }
