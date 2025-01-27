@@ -13,6 +13,15 @@ public class IdleState : PlayerState
         this.character.playerControls.PlayerMap.MoveRight.performed += this.ChangeToMoveRight;
         
         this.character.UpdatePlayerMoveVector(Vector3.zero);
+
+        if (this.character.playerControls.PlayerMap.MoveLeft.inProgress == true)
+        {
+            this.character.ChangeState(new RunState(Vector3.left));
+        }
+        else if (this.character.playerControls.PlayerMap.MoveRight.inProgress == true)
+        {
+            this.character.ChangeState(new RunState(Vector3.right));
+        }
     }
 
     public override void Exit() 

@@ -28,5 +28,4 @@ public class FallingState : MoveState
         
         this.character.UpdatePlayerMoveVector(this._moveVector);
     }
-
 }

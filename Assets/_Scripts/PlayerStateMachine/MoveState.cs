@@ -9,6 +9,8 @@ public class MoveState : PlayerState
 
     protected float _moveSpeed = 4.5f;
 
+    private float spriteOffset = 0.06f;
+
     public MoveState(Vector3 startingDirection)
     {
         this._moveDirection = startingDirection;
@@ -49,11 +51,14 @@ public class MoveState : PlayerState
         if (this._moveDirection == Vector3.left)
         {
             this.character.spriteRenderer.flipX = true;
+            this.character.spriteRenderer.gameObject.transform.localPosition = new Vector3(this.spriteOffset, 0.0f, 0.0f);
+
         }
 
         if (this._moveDirection == Vector3.right)
         {
             this.character.spriteRenderer.flipX = false;
+            this.character.spriteRenderer.gameObject.transform.localPosition = new Vector3(-this.spriteOffset, 0.0f, 0.0f);
         }
     }
 

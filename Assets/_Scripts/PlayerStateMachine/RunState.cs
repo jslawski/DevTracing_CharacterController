@@ -8,6 +8,16 @@ public class RunState : MoveState
         this._moveDirection = startingDirection;
     }
 
+    public override void FixedUpdateState()
+    {
+        base.FixedUpdateState();
+
+        if (this.character.isGrounded == false)
+        {
+            this.character.ChangeState(new FallingState(this._moveDirection));
+        }
+    }
+
     protected override void UpdateMoveVector()
     {
         this._moveVector = this._moveDirection * _moveSpeed * Time.fixedDeltaTime;
