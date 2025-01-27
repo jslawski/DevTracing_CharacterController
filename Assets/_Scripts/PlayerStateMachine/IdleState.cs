@@ -26,12 +26,13 @@ public class IdleState : PlayerState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        /*
+
+        this.character.UpdatePlayerMoveVector(Vector3.zero);
+
         if (this.character.isGrounded == false)
         {
-            this.character.ChangeState(new FallingState());
+            this.character.ChangeState(new FallingState(Vector3.zero));
         }
-        */
     }
 
     private void ChangeToMoveLeft(InputAction.CallbackContext context)

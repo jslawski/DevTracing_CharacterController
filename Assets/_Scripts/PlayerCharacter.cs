@@ -4,10 +4,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerCharacter : MonoBehaviour
 {
-    private float _moveSpeed = 4.5f;
-    
-    private float _fallSpeed = 8.5f;
-
     private Transform _playerTransform;
 
     private Collider _playerCollider;
@@ -54,31 +50,21 @@ public class PlayerCharacter : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
+    {       
         this.currentState.FixedUpdateState();
 
         this.HandleWallCollision();
+        this.HandleGroundCollision();
+
 
         this._playerTransform.Translate(this._moveVector);
 
-        this.UpdateIsGrounded();
+       //this.UpdateIsGrounded();
     }
 
     public void UpdatePlayerMoveVector(Vector3 moveDirection)
     {
-        Vector3 horizontalMovement = moveDirection * this._moveSpeed * Time.fixedDeltaTime;
-
-        Vector3 verticalMovement = Vector3.zero;
-        /*
-        if (this.isGrounded == false)
-        {
-            verticalMovement = Vector3.down * this._fallSpeed * Time.fixedDeltaTime;
-        }
-
-        
-        */
-
-        this._moveVector = horizontalMovement + verticalMovement;
+        this._moveVector = moveDirection;
     }
 
     public void ChangeState(PlayerState newState)
@@ -87,15 +73,15 @@ public class PlayerCharacter : MonoBehaviour
         {
             this.currentState.Exit();
         }
-    
+
         this.currentState = newState;
         this.currentState.Enter(this);
     }
 
     private void HandleWallCollision()
-    {
+    {    
         RaycastHit hitInfo;
-        if (Physics.BoxCast(this._playerTransform.position, this._playerCollider.bounds.extents * 0.9f, this._moveVector.normalized, out hitInfo, Quaternion.identity, this._moveVector.x) == true)
+        if (Physics.BoxCast(this._playerTransform.position, this._playerCollider.bounds.extents * 0.9f, this._moveVector.normalized, out hitInfo, Quaternion.identity, Mathf.Abs(this._moveVector.x)) == true)
         {
             float xDifference = Mathf.Abs(hitInfo.point.x - this._playerTransform.position.x) - this._playerCollider.bounds.extents.x;
 
@@ -110,13 +96,34 @@ public class PlayerCharacter : MonoBehaviour
         }
     }
 
-    private void UpdateIsGrounded()
+    private void HandleGroundCollision()
     {
-        
+        Vector3 startingPoint = this._playerTransform.position;
+        Vector3 endPoint = this._playerTransform.position + (Vector3.down * Mathf.Abs(this._moveVector.y));
 
-        
+        Debug.DrawLine(startingPoint, endPoint, Color.cyan, 10.0f);
 
-        this.isGrounded = Physics.BoxCast(this._playerTransform.position, this._playerCollider.bounds.extents, Vector3.down, Quaternion.identity, this._playerCollider.bounds.extents.y / 2.0f);
+        RaycastHit hitInfo;
+        if (Physics.BoxCast(this._playerTransform.position, this._playerCollider.bounds.extents, Vector3.down, out hitInfo, Quaternion.identity, Mathf.Abs(this._moveVector.y)) == true)
+        {
+            float yDifference = Mathf.Abs(hitInfo.point.y - this._playerTransform.position.y) - this._playerCollider.bounds.extents.y;
+
+            this._moveVector = new Vector3(this._moveVector.x, -yDifference, this._moveVector.z);
+
+            this.isGrounded = true;
+        }
+    }
+
+    private void UpdateIsGrounded()
+    {    
+        this.isGrounded = Physics.BoxCast(this._playerTransform.position, this._playerCollider.bounds.extents, Vector3.down, Quaternion.identity, this._playerCollider.bounds.extents.y);
+
+        //this.isGrounded = Physics.Raycast(this._playerTransform.position, Vector3.down, this._playerCollider.bounds.extents.y);
+
+        //Vector3 startingPoint = this._playerTransform.position;
+        //Vector3 endPoint = this._playerTransform.position + (Vector3.down * this._playerCollider.bounds.extents.y);
+
+        //Debug.DrawLine(startingPoint, endPoint, Color.red);
     }
 }
 

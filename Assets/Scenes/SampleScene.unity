@@ -742,7 +742,7 @@ Transform:
   m_GameObject: {fileID: 1151323822}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.1244748, y: -3.198, z: -0.115626015}
+  m_LocalPosition: {x: -2.81, y: 3.36, z: -0.115626015}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -792,8 +792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80f9057accba924ebaec025e88e4b6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 4.5
-  _fallSpeed: 8.5
+  spriteRenderer: {fileID: 0}
   isGrounded: 0
   collisionLayerMask:
     serializedVersion: 2
