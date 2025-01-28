@@ -84,7 +84,7 @@ public class MoveState : PlayerState
         }
         else
         {
-            this.character.ChangeState(new IdleState());
+            //this.character.ChangeState(new IdleState());
         }
     }
 }

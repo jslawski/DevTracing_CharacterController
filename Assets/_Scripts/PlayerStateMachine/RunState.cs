@@ -20,7 +20,7 @@ public class RunState : MoveState
 
     protected override void UpdateMoveVector()
     {
-        this._moveVector = this._moveDirection * _moveSpeed * Time.fixedDeltaTime;
+        this._moveVector = this._moveDirection * this._moveSpeed * Time.fixedDeltaTime;
         this.character.UpdatePlayerMoveVector(this._moveVector);
     }
 }

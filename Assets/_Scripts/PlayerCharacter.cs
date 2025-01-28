@@ -89,11 +89,11 @@ public class PlayerCharacter : MonoBehaviour
     {
         this.isGrounded = false;
     
-        Collider[] colliders = Physics.OverlapBox(this._playerTransform.position, this._playerCollider.bounds.extents, Quaternion.identity);
+        Collider[] colliders = Physics.OverlapBox(this._playerCollider.bounds.center, this._playerCollider.bounds.extents, Quaternion.identity, this.collisionLayerMask);
     
         foreach (Collider collider in colliders) 
         {
-            if (collider.bounds.max.y <= this._playerCollider.bounds.min.y)
+            if (collider.bounds.max.y >= this._playerCollider.bounds.min.y)
             {
                 this.isGrounded = true;
             }
@@ -102,7 +102,7 @@ public class PlayerCharacter : MonoBehaviour
     
     private void HandleCollision()
     {
-        Collider[] colliders = Physics.OverlapBox(this._playerTransform.position, this._playerCollider.bounds.extents, Quaternion.identity, this.collisionLayerMask);
+        Collider[] colliders = Physics.OverlapBox(this._playerCollider.bounds.center, this._playerCollider.bounds.extents, Quaternion.identity, this.collisionLayerMask);
 
         foreach (Collider collidedObject in colliders)
         {
@@ -117,26 +117,59 @@ public class PlayerCharacter : MonoBehaviour
 
     private void ResolveCollision(float left, float right, float top, float bottom)
     {
-        float minimumValue = Mathf.Abs(left);
-        Vector3 penetrationVector = new Vector3(-left, 0.0f);
+        float minimumValue = float.PositiveInfinity;
+        Vector3 penetrationVector = Vector3.zero;
 
+        if (Mathf.Abs(left) < minimumValue)
+        {            
+            minimumValue = Mathf.Abs(left);
+            if (this._moveVector.x < 0.0f)
+            {
+                penetrationVector = new Vector3(-left - this._moveVector.x, 0.0f);
+            }
+            else
+            {
+                penetrationVector = new Vector3(-left, 0.0f);
+            }
+        }
         if (Mathf.Abs(right) < minimumValue)
         {
             minimumValue = Mathf.Abs(right);
-            penetrationVector = new Vector3(-right, 0.0f);
+            if (this._moveVector.x > 0.0f)
+            {
+                penetrationVector = new Vector3(-right - this._moveVector.x, 0.0f);
+            }
+            else
+            {
+                penetrationVector = new Vector3(-right, 0.0f);
+            }
         }
         if (Mathf.Abs(top) < minimumValue)
         {
             minimumValue = Mathf.Abs(top);
-            penetrationVector = new Vector3(0.0f, top);
+            if (this._moveVector.y < 0.0f)
+            {
+                penetrationVector = new Vector3(0.0f, top - this._moveVector.y);
+            }
+            else
+            {
+                penetrationVector = new Vector3(0.0f, top);
+            }
         }
         if (Mathf.Abs(bottom) < minimumValue)
         {
             minimumValue = Mathf.Abs(bottom);
-            penetrationVector = new Vector3(0.0f, bottom);
+            if (this._moveVector.y > 0.0f)
+            {
+                penetrationVector = new Vector3(0.0f, bottom - this._moveVector.y);
+            }
+            else
+            {
+                penetrationVector = new Vector3(0.0f, bottom);
+            }
         }
 
-        this._playerTransform.Translate(penetrationVector);
+         this._playerTransform.Translate(penetrationVector);
     }    
 }
 
