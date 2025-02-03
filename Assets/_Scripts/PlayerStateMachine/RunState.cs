@@ -8,9 +8,23 @@ public class RunState : MoveState
         this._moveDirection = startingDirection;
     }
 
-    public override void FixedUpdateState()
+    public override void Enter(PlayerCharacter character)
     {
-        base.FixedUpdateState();
+        base.Enter(character);
+
+        this.character.playerControls.PlayerMap.Jump.performed += this.ChangeToJump;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+
+        this.character.playerControls.PlayerMap.Jump.performed -= this.ChangeToJump;
+    }
+
+    public override void UpdateState()
+    {
+        base.UpdateState();
 
         if (this.character.isGrounded == false)
         {
@@ -20,7 +34,12 @@ public class RunState : MoveState
 
     protected override void UpdateMoveVector()
     {
-        this._moveVector = this._moveDirection * this._moveSpeed * Time.fixedDeltaTime;
-        this.character.UpdatePlayerMoveVector(this._moveVector);
+        this._moveVector = this._moveDirection * this._moveSpeed;// * Time.fixedDeltaTime;
+        this.character.UpdatePlayerVelocity(this._moveVector);
+    }
+
+    private void ChangeToJump(InputAction.CallbackContext context)
+    {
+        
     }
 }

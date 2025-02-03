@@ -36,9 +36,9 @@ public class MoveState : PlayerState
         this.character.playerControls.PlayerMap.MoveRight.canceled -= this.MoveLeftOrRightCanceled;
     }
 
-    public override void FixedUpdateState()
+    public override void UpdateState()
     {
-        base.FixedUpdateState();
+        base.UpdateState();
 
         this.UpdateMoveVector();
         this.UpdateSprite();
@@ -84,7 +84,7 @@ public class MoveState : PlayerState
         }
         else
         {
-            //this.character.ChangeState(new IdleState());
+            this.character.ChangeState(new IdleState());
         }
     }
 }

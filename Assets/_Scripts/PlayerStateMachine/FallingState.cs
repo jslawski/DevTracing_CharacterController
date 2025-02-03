@@ -10,22 +10,29 @@ public class FallingState : MoveState
         this._moveDirection = startingDirection;
     }
 
-    public override void FixedUpdateState()
+    public override void UpdateState()
     {
-        base.FixedUpdateState();
+        base.UpdateState();
 
         if (this.character.isGrounded == true)
         {
-            this.character.ChangeState(new IdleState());
+            if (this._moveDirection.x == 0.0f)
+            {
+                this.character.ChangeState(new IdleState());
+            }
+            else
+            {
+                this.character.ChangeState(new RunState(this._moveDirection)); 
+            }
         }
     }
 
     protected override void UpdateMoveVector()
     {
-        float horizontalValue = this._moveDirection.x * this._midAirMoveSpeed * Time.fixedDeltaTime;
-        float verticalValue = -this._fallSpeed * Time.fixedDeltaTime;
+        float horizontalValue = this._moveDirection.x  * this._midAirMoveSpeed;// * Time.fixedDeltaTime;
+        float verticalValue = -this._fallSpeed;// * Time.fixedDeltaTime;
         this._moveVector = new Vector3(horizontalValue, verticalValue, this._moveVector.z);
         
-        this.character.UpdatePlayerMoveVector(this._moveVector);
+        this.character.UpdatePlayerVelocity(this._moveVector);
     }
 }

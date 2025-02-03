@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor.PackageManager;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class PlayerCharacter : MonoBehaviour
 
     private Collider _playerCollider;
 
-    private Vector3 _moveVector;
+    private Rigidbody _playerRigidbody;
 
     [HideInInspector]
     public SpriteRenderer spriteRenderer;
@@ -23,12 +24,11 @@ public class PlayerCharacter : MonoBehaviour
 
     public LayerMask collisionLayerMask;
 
-    public Transform debugBoxCast;
-
     private void Awake()
     {
         this._playerTransform = GetComponent<Transform>();
         this._playerCollider = GetComponentInChildren<Collider>();
+        this._playerRigidbody = GetComponent<Rigidbody>();
         this.spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         this.playerControls = new PlayerControls();
@@ -48,30 +48,31 @@ public class PlayerCharacter : MonoBehaviour
 
     private void Update()
     {
+        this.UpdateIsGrounded();
+
         this.currentState.UpdateState();
 
         if (Input.GetKeyUp(KeyCode.R))
         {
             SceneManager.LoadScene(0);
         }
-
-        Debug.LogError("State: " + this.currentState.GetType().ToString());
     }
 
     private void FixedUpdate()
-    {   
+    {
         this.currentState.FixedUpdateState();
 
-        this._playerTransform.Translate(this._moveVector);
-
-        this.HandleCollision();
-
-        this.UpdateIsGrounded();
+        //Debug.LogError("State: " + this.currentState.GetType().ToString() + " Velocity: " + this._playerRigidbody.linearVelocity.x);
     }
 
-    public void UpdatePlayerMoveVector(Vector3 moveDirection)
+    public void UpdatePlayerVelocity(Vector3 newVelocity)
     {
-        this._moveVector = moveDirection;
+        this._playerRigidbody.linearVelocity = newVelocity;
+    }
+
+    public void IncrementPlayerRigidbodyPosition(Vector3 vectorIncrement)
+    {
+        this._playerRigidbody.position += vectorIncrement;
     }
 
     public void ChangeState(PlayerState newState)
@@ -93,83 +94,25 @@ public class PlayerCharacter : MonoBehaviour
     
         foreach (Collider collider in colliders) 
         {
-            if (collider.bounds.max.y >= this._playerCollider.bounds.min.y)
+            if (Mathf.Abs(collider.bounds.max.y - this._playerCollider.bounds.min.y) <= 0.01f)
             {
                 this.isGrounded = true;
             }
         }
-    }    
-    
-    private void HandleCollision()
-    {
-        Collider[] colliders = Physics.OverlapBox(this._playerCollider.bounds.center, this._playerCollider.bounds.extents, Quaternion.identity, this.collisionLayerMask);
-
-        foreach (Collider collidedObject in colliders)
-        {
-            float left = this._playerCollider.bounds.min.x - collidedObject.bounds.max.x;
-            float right = this._playerCollider.bounds.max.x - collidedObject.bounds.min.x;
-            float top = collidedObject.bounds.max.y - this._playerCollider.bounds.min.y;
-            float bottom = collidedObject.bounds.min.y - this._playerCollider.bounds.max.y;
-
-            this.ResolveCollision(left, right, top, bottom);
-        }
     }
 
-    private void ResolveCollision(float left, float right, float top, float bottom)
-    {
-        float minimumValue = float.PositiveInfinity;
-        Vector3 penetrationVector = Vector3.zero;
+    private void OnCollisionEnter(Collision collision)
+    {    
+        foreach (ContactPoint point in collision.contacts)
+        {
+            if (point.normal == Vector3.up)
+            {
+                //Debug.LogError("Adjusting");
+                this._playerRigidbody.position = new Vector3(this._playerRigidbody.position.x, this._playerRigidbody.position.y + point.separation, this._playerRigidbody.position.z);    
+            }
+        }
+        
+    }
 
-        if (Mathf.Abs(left) < minimumValue)
-        {            
-            minimumValue = Mathf.Abs(left);
-            if (this._moveVector.x < 0.0f)
-            {
-                penetrationVector = new Vector3(-left - this._moveVector.x, 0.0f);
-            }
-            else
-            {
-                penetrationVector = new Vector3(-left, 0.0f);
-            }
-        }
-        if (Mathf.Abs(right) < minimumValue)
-        {
-            minimumValue = Mathf.Abs(right);
-            if (this._moveVector.x > 0.0f)
-            {
-                penetrationVector = new Vector3(-right - this._moveVector.x, 0.0f);
-            }
-            else
-            {
-                penetrationVector = new Vector3(-right, 0.0f);
-            }
-        }
-        if (Mathf.Abs(top) < minimumValue)
-        {
-            minimumValue = Mathf.Abs(top);
-            if (this._moveVector.y < 0.0f)
-            {
-                penetrationVector = new Vector3(0.0f, top - this._moveVector.y);
-            }
-            else
-            {
-                penetrationVector = new Vector3(0.0f, top);
-            }
-        }
-        if (Mathf.Abs(bottom) < minimumValue)
-        {
-            minimumValue = Mathf.Abs(bottom);
-            if (this._moveVector.y > 0.0f)
-            {
-                penetrationVector = new Vector3(0.0f, bottom - this._moveVector.y);
-            }
-            else
-            {
-                penetrationVector = new Vector3(0.0f, bottom);
-            }
-        }
-
-         this._playerTransform.Translate(penetrationVector);
-    }    
 }
 

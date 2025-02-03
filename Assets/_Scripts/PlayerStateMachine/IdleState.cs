@@ -11,8 +11,9 @@ public class IdleState : PlayerState
 
         this.character.playerControls.PlayerMap.MoveLeft.performed += this.ChangeToMoveLeft;
         this.character.playerControls.PlayerMap.MoveRight.performed += this.ChangeToMoveRight;
-        
-        this.character.UpdatePlayerMoveVector(Vector3.zero);
+        this.character.playerControls.PlayerMap.Jump.performed += this.ChangeToJump;
+
+        this.character.UpdatePlayerVelocity(Vector3.zero);
 
         if (this.character.playerControls.PlayerMap.MoveLeft.inProgress == true)
         {
@@ -30,13 +31,14 @@ public class IdleState : PlayerState
 
         character.playerControls.PlayerMap.MoveLeft.performed -= this.ChangeToMoveLeft;
         character.playerControls.PlayerMap.MoveRight.performed -= this.ChangeToMoveRight;
+        this.character.playerControls.PlayerMap.Jump.performed -= this.ChangeToJump;
     }
 
-    public override void FixedUpdateState()
+    public override void UpdateState()
     {
-        base.FixedUpdateState();
+        base.UpdateState();
 
-        this.character.UpdatePlayerMoveVector(Vector3.zero);
+        this.character.UpdatePlayerVelocity(Vector3.zero);
 
         if (this.character.isGrounded == false)
         {
@@ -53,4 +55,11 @@ public class IdleState : PlayerState
     {
         this.character.ChangeState(new RunState(Vector3.right));
     }
+
+    private void ChangeToJump(InputAction.CallbackContext context)
+    {
+        this.character.ChangeState(new JumpState());
+    }
+
+
 }
