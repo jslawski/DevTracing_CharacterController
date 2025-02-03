@@ -101,20 +101,5 @@ public class PlayerCharacter : MonoBehaviour
             }
         }
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {    
-        foreach (ContactPoint point in collision.contacts)
-        {
-            if (point.normal == Vector3.up)
-            {
-                //Debug.LogError("Adjusting");
-                //this._playerRigidbody.position = new Vector3(this._playerRigidbody.position.x, this._playerRigidbody.position.y + point.separation, this._playerRigidbody.position.z);    
-                //this.canJump = true;
-            }
-        }
-        
-    }
-
 }
 
