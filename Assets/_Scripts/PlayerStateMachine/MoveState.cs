@@ -72,7 +72,7 @@ public class MoveState : PlayerState
         this._moveDirection = Vector3.right;
     }
 
-    private void MoveLeftOrRightCanceled(InputAction.CallbackContext context)
+    protected virtual void MoveLeftOrRightCanceled(InputAction.CallbackContext context)
     {
         if (this.character.playerControls.PlayerMap.MoveLeft.inProgress == true)
         {

@@ -40,6 +40,6 @@ public class RunState : MoveState
 
     private void ChangeToJump(InputAction.CallbackContext context)
     {
-        
+        this.character.ChangeState(new JumpState(this._moveDirection));
     }
 }

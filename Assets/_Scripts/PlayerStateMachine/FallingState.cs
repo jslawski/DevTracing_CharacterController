@@ -10,6 +10,13 @@ public class FallingState : MoveState
         this._moveDirection = startingDirection;
     }
 
+    public override void Enter(PlayerCharacter character)
+    {
+        base.Enter(character);
+
+        this.character.isGrounded = false;
+    }
+
     public override void UpdateState()
     {
         base.UpdateState();

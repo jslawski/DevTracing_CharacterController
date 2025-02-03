@@ -21,6 +21,7 @@ public class PlayerCharacter : MonoBehaviour
     public PlayerState currentState;
 
     public bool isGrounded = false;
+    public bool canJump = false;
 
     public LayerMask collisionLayerMask;
 
@@ -47,10 +48,10 @@ public class PlayerCharacter : MonoBehaviour
     }
 
     private void Update()
-    {
-        this.UpdateIsGrounded();
-
+    {    
         this.currentState.UpdateState();
+
+        this.UpdateIsGrounded();
 
         if (Input.GetKeyUp(KeyCode.R))
         {
@@ -59,7 +60,7 @@ public class PlayerCharacter : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
+    {    
         this.currentState.FixedUpdateState();
 
         //Debug.LogError("State: " + this.currentState.GetType().ToString() + " Velocity: " + this._playerRigidbody.linearVelocity.x);
@@ -90,7 +91,7 @@ public class PlayerCharacter : MonoBehaviour
     {
         this.isGrounded = false;
     
-        Collider[] colliders = Physics.OverlapBox(this._playerCollider.bounds.center, this._playerCollider.bounds.extents, Quaternion.identity, this.collisionLayerMask);
+        Collider[] colliders = Physics.OverlapBox(this._playerCollider.bounds.center, this._playerCollider.bounds.extents * 1.1f, Quaternion.identity, this.collisionLayerMask);
     
         foreach (Collider collider in colliders) 
         {
@@ -108,7 +109,8 @@ public class PlayerCharacter : MonoBehaviour
             if (point.normal == Vector3.up)
             {
                 //Debug.LogError("Adjusting");
-                this._playerRigidbody.position = new Vector3(this._playerRigidbody.position.x, this._playerRigidbody.position.y + point.separation, this._playerRigidbody.position.z);    
+                //this._playerRigidbody.position = new Vector3(this._playerRigidbody.position.x, this._playerRigidbody.position.y + point.separation, this._playerRigidbody.position.z);    
+                //this.canJump = true;
             }
         }
         

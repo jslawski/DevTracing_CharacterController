@@ -58,7 +58,7 @@ public class IdleState : PlayerState
 
     private void ChangeToJump(InputAction.CallbackContext context)
     {
-        this.character.ChangeState(new JumpState());
+        this.character.ChangeState(new JumpState(Vector3.zero));
     }
 
 
